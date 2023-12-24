@@ -1,0 +1,88 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.github.toweron2.go-error-folds</id>
+    <!-- Public plugin name should be written in Title Case.
+        Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>Go Error Folds</name>
+    <version>2023.1</version>
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor url="https://github.com/2276225819/goland-go-error-folds">JetBrains</vendor>
+
+    <!-- 插件描述，使用<![CDATA[  ]]> 来支持HTML格式-->
+    <description><![CDATA[
+    fold go error handling . <br>
+before:<br>
+<pre>
+e := method()
+if e != nil {
+    return errors.New("%w",e)
+}
+</pre>
+after:<br>
+<pre>
+e := method() catch {
+    return errors.New("%w",e)
+}
+</pre>
+one line returns/panics:<br>
+<pre>
+e := method() catch : errors.Errorf("%w",e) ⤴
+</pre>
+  ]]></description>
+
+    <!-- 插件更新记录，使用<![CDATA[  ]]> 来支持HTML格式-->
+    <change-notes>Initial release of the plugin.</change-notes>
+
+    <!-- 插件依赖，可以依赖模块或插件 -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.go</depends>
+
+    <!-- 资源包，kv，方便管理文本以及i18n-->
+    <resource-bundle>messages.MyBundle</resource-bundle>
+    <!-- 行为 https://plugins.jetbrains.com/docs/intellij/plugin-actions.html-->
+    <actions>
+
+<!--        <action id="GoErrorFolds" class="com.github.toweron2.go-error-folds.GoErrorFolds" text="GoErrorFolds" description="GoErrorFolds">-->
+<!--            <add-to-group group-id="EditorPopupMenu" anchor="first"/>-->
+<!--        </action>-->
+
+        <group id="GoFolding" text="GoFolding" popup="false" compact="true"  keep-content="true" searchable="true" >
+            <add-to-group group-id="FoldingGroup" anchor="before" relative-to-action="ExpandRegion"/>
+            <action id="GoErrorCollapse" class="com.github.toweron2.go-error-folds.GoErrorCollapse" text="GoErrorCollapse" description="GoErrorCollapse">
+                <add-to-group group-id="GoFolding" anchor="first"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="alt MINUS"/>
+            </action>"
+            <action id="GoCaseDefaultCollapse" class="com.github.toweron2.go-error-folds.GoCaseDefaultCollapse" text="GoCaseDefaultCollapse" description="GoCaseDefaultCollapse">
+                <add-to-group group-id="GoFolding" anchor="first"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt MINUS"/>
+            </action>"
+
+            <action id="GoErrorExpand" class="com.github.toweron2.go-error-folds.GoErrorExpand" text="GoErrorExpand" description="GoErrorExpand" >
+                <add-to-group group-id="GoFolding" anchor="first" />
+                <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt EQUALS" />
+            </action>
+            <separator />
+        </group>
+
+    </actions>
+
+    <!-- 声明该插件对IDEA core或其他插件的扩展，Ns是NameSpace的缩写 -->
+<!--    <extensions defaultExtensionNs="com.intellij">-->
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow factoryClass="com.github.toweron2.go-error-folds.toolWindow.MyToolWindowFactory" id="MyToolWindow" />
+<!--        <lang.foldingBuilder language="go" implementationClass="com.github.toweron2.go-error-folds.GoFoldErrorBuilder" />-->
+<!--        <lang.foldingBuilder language="go" implementationClass="com.github.toweron2.go-error-folds.GoFoldCaseDefaultBuilder" />-->
+    </extensions>
+<!--        <lang.foldingBuilder language="go" implementationClass="com.example.MyGoFoldingBuilder" />-->
+    <!-- 插件定义的扩展点，以供其他插件扩展该插件，类似Java的抽象类的功能
+   如何在https://plugins.jetbrains.com/docs/intellij/plugin-extensions.html -->
+    <extensionPoints></extensionPoints>
+
+    <!-- 监听器
+        https://plugins.jetbrains.com/docs/intellij/plugin-listeners.html -->
+    <applicationListeners>
+        <listener class="com.github.toweron2.go-error-folds.listeners.MyApplicationActivationListener"
+                  topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+    </applicationListeners>
+</idea-plugin>
